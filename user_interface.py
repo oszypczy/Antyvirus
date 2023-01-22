@@ -14,6 +14,7 @@ def cls():
 def main():
     cls()
     folder_path = input("Give directory path which you want to scan: ")
+    folder_path = os.path.abspath(folder_path)
     if not os.path.isdir(folder_path):
         raise DirectoryNotFound('Given directory is invalid.')
     else:
@@ -37,20 +38,20 @@ def main():
                 print(folder.show_file_info())
             elif choice == '2':
                 cls()
-                folder.create_index()
+                folder.update_index()
                 folder.scan_files_for_viruses()
                 print(folder.show_file_info())
             elif choice == '3':
                 seconds = input("What sould be the period between scans (seconds): ") # noqa 551
                 while True:
                     cls()
-                    folder.create_index()
+                    folder.update_index()
                     folder.scan_files_for_viruses()
                     print(folder.show_file_info())
                     sleep(int(seconds))
             elif choice == '4':
                 cls()
-                folder.create_index()
+                folder.update_index()
                 print(folder.show_file_info())
             elif choice == '5':
                 break

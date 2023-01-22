@@ -224,3 +224,27 @@ def test_fix_infected_files():
     assert content == 'It is file1.txt file\nAfter fixing virus will be deleted\n' # noqa 551
     assert folder.get_list_of_files()[0].get_file_status() == 'Safe'
     shutil.rmtree(folder_path)
+
+
+def test_deleting_files_from_index():
+    current_dir = os.getcwd()
+    folder_path = os.path.join(current_dir, "test_folder")
+    os.mkdir(folder_path)
+    folder = Folder(folder_path)
+    with open(os.path.join(folder_path, "file1.txt"), "w") as f:
+        f.write("It is file1.txt file\n")
+        f.write("It is safe")
+    with open(os.path.join(folder_path, "file2.txt"), "w") as f:
+        f.write("It is file2.txt file\n")
+        f.write('It is dangerous\n')
+        f.write("AUDIGW*GD*ASYDWQSDAD*DIA^$#@EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*") # noqa 551
+    folder.create_index()
+    assert len(folder.get_list_of_files()) == 2
+    list_of_names = [each_file.get_file_name() for each_file in folder.get_list_of_files()] # noqa 551
+    assert list_of_names == ['file1.txt', 'file2.txt']
+    os.remove(os.path.join(folder_path, "file2.txt"))
+    folder.update_index()
+    assert len(folder.get_list_of_files()) == 1
+    list_of_names = [each_file.get_file_name() for each_file in folder.get_list_of_files()] # noqa 551
+    assert list_of_names == ['file1.txt']
+    shutil.rmtree(folder_path)
